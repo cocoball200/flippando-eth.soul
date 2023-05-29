@@ -14,36 +14,28 @@ export const setAddresses = createAsyncThunk(
     console.log('args ' + JSON.stringify(args, null, 2));
       try {
         if (args.network === 'goerli'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = goerli;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return goerli;
         }
         else if (args.network === 'mumbai'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = mumbai;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return mumbai;
         }
         else if (args.network === 'polygon-zkevm'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = polygonZkevm;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return polygonZkevm;
         }
         else if (args.network === 'near'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = near;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return near;
         }
         else if (args.network === 'evmos'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = evmos;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return evmos;
         }
         else if (args.network === 'gnosis'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = gnosis;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return gnosis;
         }
         else if (args.network === 'arbitrum'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = arbitrum;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return arbitrum;
         }
         else if (args.network === 'optimism'){
-          const { flippandoAddress, flipAddress, flippandoBundlerAddress } = optimism;
-          return {flippandoAddress, flipAddress, flippandoBundlerAddress};
+          return optimism;
         }
   
       } catch (error) {
@@ -102,9 +94,7 @@ const flippandoSlice = createSlice({
   },
 });
 
-// Extract and export each action creator by name
 export const { setBlockchain, setNetwork } = flippandoSlice.actions;
 
-// Export the reducer, either as a default or named export
 export default flippandoSlice;
 
