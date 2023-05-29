@@ -3,12 +3,14 @@ import '../styles/globals.css'
 import styles from '../styles/Home.module.css'
 import "@material-tailwind/react/tailwind.css";
 import Link from 'next/link'
+import { Provider } from 'react-redux';
+import {store} from '../store/store.js';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-
 function MyApp({ Component, pageProps }) {
   return (
+    <Provider store={store}>
     <DndProvider backend={HTML5Backend}>
     <div className={styles.container}>
   
@@ -20,6 +22,11 @@ function MyApp({ Component, pageProps }) {
         <div className="text-5xl font-extrabold mb-4 flex justify-end">Flippando</div>
         <div className="flex justify-end">
           <Link href="/">
+            <a className="mr-4 text-blue-800">
+              Home
+            </a>
+          </Link>
+          <Link href="/flip">
             <a className="mr-4 text-blue-800">
               Flip
             </a>
@@ -45,6 +52,7 @@ function MyApp({ Component, pageProps }) {
       <Component {...pageProps} />
     </div>
     </DndProvider>
+    </Provider>
   )
 }
 
