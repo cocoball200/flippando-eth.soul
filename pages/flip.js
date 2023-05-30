@@ -21,12 +21,12 @@ import Hexagram1 from './assets/hexagrams/hexagram1.svg';
 import Hexagram2 from './assets/hexagrams/hexagram2.svg';
 import Hexagram4 from './assets/hexagrams/hexagram4.svg';
 import Hexagram6 from './assets/hexagrams/hexagram6.svg';
-/*import {
+import {
   flippandoAddress,
   flipAddress,
   flippandoBundlerAddress
-} from '../config'
-*/
+} from '../src/config/testnet/evmos.js'
+
 
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
@@ -35,11 +35,12 @@ import SmallTile from '../components/SmallTile';
 
 export default function Home() {
 
+    /*
     const adr = useSelector(state => state.flippando.adr);
     const flippandoAddress = adr.flippandoAddress;
     const flipAddress = adr.flipAddress;
     const flippandoBundlerAddress = adr.flippandoBundlerAddress;
-    console.log('adr' + JSON.stringify(adr, null, 2));
+    console.log('adr' + JSON.stringify(adr, null, 2));*/
   const [positions, setPositions] = useState([])
   const [remainingTiles, setRemainingTiles] = useState([])
   const [cleanupEvent, setCleanupEvent] = useState(false)
@@ -173,7 +174,7 @@ export default function Home() {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-      
+      console.log('contract' + JSON.stringify(contract));
       contract.on("GameCreated", (gameId, sender) => {
         console.log("gameId: " + gameId + ", sender: " + sender)
         console.log("gameLevel: " + gameLevel + ", gameType: " + gameType)
