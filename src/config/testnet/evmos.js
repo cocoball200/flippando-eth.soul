@@ -1,7 +1,6 @@
-//placeholder
 module.exports = {
-    svgAddress: "evmos placeholder",
-    flippandoAddress: "evmos placeholder",
-    flipAddress: "evmos placeholder",
-    flippandoBundlerAddress: "evmos placeholder",
-  }
+  svgAddress: "0x61e29e105f32250B198928E7E491C09b23b99E2b",
+  flippandoAddress: "0x824a6760B43ba4A553bBeE1fd3da5C52163E9435",
+  flipAddress: "0xBAfb34964B29150796bA37ce79B58AC0D26EE230",
+  flippandoBundlerAddress: "0xB7EFc01d6D326704a8E35a2f82bf059306d8D953",
+}

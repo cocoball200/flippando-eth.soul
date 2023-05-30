@@ -14,15 +14,21 @@ async function main() {
   await flip.deployed();
   console.log("FLIP deployed to:", flip.address);
 
-  // Deploy Flippando.sol
+  // Deploy FlippandoBundler.sol
   const FlippandoBundler = await hre.ethers.getContractFactory("FlippandoBundler");
   const flippandoBundler = await FlippandoBundler.deploy();
   await flippandoBundler.deployed();
   console.log("FlippandoBundler deployed to:", flippandoBundler.address);
 
+  // Deploy FlippandoGameMaster.sol
+  const FlippandoGameMaster = await hre.ethers.getContractFactory("FlippandoGameMaster");
+  const flippandoGameMaster = await FlippandoGameMaster.deploy();
+  await flippandoGameMaster.deployed();
+  console.log("flippandoGameMaster deployed to:", flippandoGameMaster.address);
+
   // Deploy Flippando.sol
   const Flippando = await hre.ethers.getContractFactory("Flippando");
-  const flippando = await Flippando.deploy(svg.address, flip.address, flippandoBundler.address);
+  const flippando = await Flippando.deploy(svg.address, flip.address, flippandoBundler.address, flippandoGameMaster.address);
   await flippando.deployed();
   console.log("Flippando deployed to:", flippando.address);
 
@@ -34,7 +40,10 @@ async function main() {
   await flippandoBundler.changeOwner(flippando.address);
   console.log("Changed owner of FlippandoBundler to:", flippando.address);
   
-
+  // Change owner to Flippando
+  await flippandoGameMaster.changeOwner(flippando.address);
+  console.log("Changed owner of FlippandoGameMaster to:", flippando.address);
+  
   // Write the addresses to config.js
   fs.writeFileSync("./config.js", `
     module.exports = {
@@ -42,6 +51,7 @@ async function main() {
       flippandoAddress: "${flippando.address}",
       flipAddress: "${flip.address}",
       flippandoBundlerAddress: "${flippandoBundler.address}",
+      flippandoGameMasterAddress: "${flippandoGameMaster.address}",
     }`);
 }
 

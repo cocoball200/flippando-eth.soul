@@ -28,12 +28,17 @@ interface IFLIPPANDOBUNDLER {
     function isPartOfArtwork(uint256 tokenId) external returns(bool);
 }
 
+interface IFLIPPANDOGAMEMASTER {  
+    function finishGame(string memory gameId, address user) external;
+}
+
 
 contract Flippando is ERC721URIStorage, ERC721Enumerable {
     
     ISVG public svg;
     IFLIP public flip;
     IFLIPPANDOBUNDLER public flippandoBundler;
+    IFLIPPANDOGAMEMASTER public flippandoGameMaster;
 
     struct Game {
         uint8[] board;
@@ -64,18 +69,22 @@ contract Flippando is ERC721URIStorage, ERC721Enumerable {
     mapping(string => Game) public games;
     mapping(uint256 => bool) public inTransit;
 
-    constructor(address _svgAddress, address _flipAddress, address _flippandoBundlerAddress) ERC721("Flippando Universe", "FLIP") {
+    constructor(address _svgAddress, 
+    address _flipAddress, 
+    address _flippandoBundlerAddress,
+    address _flippandoGameMasterAddress) ERC721("Flippando Universe", "FLIP") {
         owner = payable(msg.sender);
         svg = ISVG(_svgAddress);
         flip = IFLIP(_flipAddress);
         flippandoBundler = IFLIPPANDOBUNDLER(_flippandoBundlerAddress);
+        flippandoGameMaster = IFLIPPANDOGAMEMASTER(_flippandoGameMasterAddress);
     }
 
     // game logic functions
-    function create_game(string memory id, uint256 boardSize, string memory gameType) public  {
+    function initialize_game(string memory id, uint256 boardSize, string memory gameType, address gamePlayer) public  {
         require(isValidGameType(gameType), "Invalid game type");
         require(isValidGameLevel(boardSize), "Invalid game level");
-        games[id].player = msg.sender;
+        games[id].player = gamePlayer;
         games[id].id = id;
         games[id].board = new uint8[](boardSize);
         games[id].solvedBoard = new uint8[](boardSize);
@@ -152,6 +161,8 @@ contract Flippando is ERC721URIStorage, ERC721Enumerable {
         }
         if(unsolved_tiles == 0){
           emit GameSolved(id, games[id]);
+          // call flippandoGameMaster finishGame
+          flippandoGameMaster.finishGame(id, games[id].player);
         }
 
     }
