@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 //import "@openzeppelin/contracts/access/Ownable.sol";
 import "./FLIP.sol";
+import "./Flippando.sol";
 
 contract FlippandoGameMaster is ERC721URIStorage {
     uint256 private tokenIdCounter;
@@ -27,6 +28,7 @@ contract FlippandoGameMaster is ERC721URIStorage {
     mapping(address => uint256[]) private normalGames;
 
     FLIP private flipToken; // FLIP ERC20 Token address
+    Flippando private flippando; // Flippando instance to call initialize_game
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the contract owner can call this function");
@@ -35,6 +37,9 @@ contract FlippandoGameMaster is ERC721URIStorage {
 
     function changeOwner(address newOwner) external onlyOwner {
         owner = newOwner;
+        // the owner of this contract is Flippando (after initialization)
+        // so we set the address of the contract to it
+        flippando = Flippando(newOwner);
     }
 
     constructor(address flipTokenAddress) ERC721("FlippandoGameMaster", "FGMT") {
@@ -42,10 +47,11 @@ contract FlippandoGameMaster is ERC721URIStorage {
         owner = msg.sender;
     }
 
-    function createGame(string memory metadata, uint256 boardSize, GameType gameType, string memory gameTileType) external {
+    function createGame(uint256 boardSize, GameType gameType, string memory gameTileType) external {
+        string memory metadata = '{"name": "Flippando Game", "description": "Estoy flippando en colores", "status": "created", "image": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iMjUiIHZpZXdCb3g9IjAiIGZpbGw9IiMwMDAwMDAiIC8+Cg=="}';
         if (gameType == GameType.Sponsored) {
             require(flipToken.balanceOf(msg.sender) >= FLIP_PER_SPONSORED_GAME, "Insufficient FLIP tokens");
-
+            
             uint256 gameId = tokenIdCounter;
             tokenIdCounter++;
 
@@ -84,16 +90,13 @@ contract FlippandoGameMaster is ERC721URIStorage {
         }
     }
 
-    function initializeGame(uint256 gameId, uint256 boardSize, GameType gameType, address gamePlayer) public {
+    function initializeGame(string memory gameId, uint256 boardSize) public {
         // check if the game with gameId exists
-        // check if the game with gameId is of type GameType
-        // construct the gameId string: contract address + gameId toString()
-        // constructedGameId = makeGameId(gameId)
-        // construct the gameType param of Flippando contract: 0 = sponsored, 1
-        //if gameType == sponsored, adjust the following in the games[gameId]: 
-        // games[gameId].gamePlayer= msg.sender, games[gameId].gameStatus="started"
-        // flippando param gamePlayer=msg.sender
-        // call Flippando initialize_game(gameId, boardSize, gameType, gamePlayer) function
+        uint256 extractedGameId = extractGameId(gameId);
+        require(_exists(extractedGameId), "Game does not exist");
+        games[extractedGameId].gameStatus = "started";
+        // call Flippando initialize_game(gameId, boardSize, gameTileType, gamePlayer) function
+        flippando.initialize_game(gameId, boardSize, games[extractedGameId].gameTileType, msg.sender);
     }
 
     function finishGame(string memory gameId, address user) external onlyOwner {

@@ -1,6 +1,22 @@
 const fs = require("fs");
 const hre = require("hardhat");
 
+const { network } = require("hardhat");
+
+const currentNetwork = network.name;
+console.log("Current network:", currentNetwork);
+var configFile;
+
+
+if (currentNetwork === 'polygonzkEVMTestnet') { configFile = "./src/config/testnet/ploygon-zkevm.js" }
+else if (currentNetwork === 'polygonTestnet') { configFile = "./src/config/testnet/mumbai.js" }
+else if (currentNetwork === 'evmosTestnet') { configFile = "./src/config/testnet/evmos.js" }
+else if (currentNetwork === 'auroraTestnet') { configFile = "./src/config/testnet/near.js" }
+else if (currentNetwork === 'gnosisTestnet') { configFile = "./src/config/testnet/gnosis.js" }
+else if (currentNetwork === 'arbitrumTestnet') { configFile = "./src/config/testnet/arbitrum.js" }
+else if (currentNetwork === 'optimismTestnet') { configFile = "./src/config/testnet/optimism.js" }
+else if (currentNetwork === 'goerli') { configFile = "./src/config/testnet/goerli.js" }
+console.log("Current configFile: ", configFile);
 async function main() {
   // Deploy SVG.sol
   const SVG = await hre.ethers.getContractFactory("SVG");
@@ -12,7 +28,7 @@ async function main() {
   const FLIP = await hre.ethers.getContractFactory("FLIP");
   const flip = await FLIP.deploy();
   await flip.deployed();
-  console.log("FLIP deployed to:", flip.address);
+  console.log("Flip deployed to:", flip.address);
 
   // Deploy FlippandoBundler.sol
   const FlippandoBundler = await hre.ethers.getContractFactory("FlippandoBundler");
@@ -22,9 +38,9 @@ async function main() {
 
   // Deploy FlippandoGameMaster.sol
   const FlippandoGameMaster = await hre.ethers.getContractFactory("FlippandoGameMaster");
-  const flippandoGameMaster = await FlippandoGameMaster.deploy();
+  const flippandoGameMaster = await FlippandoGameMaster.deploy(flip.address);
   await flippandoGameMaster.deployed();
-  console.log("flippandoGameMaster deployed to:", flippandoGameMaster.address);
+  console.log("FlippandoGameMaster deployed to:", flippandoGameMaster.address);
 
   // Deploy Flippando.sol
   const Flippando = await hre.ethers.getContractFactory("Flippando");
@@ -45,7 +61,8 @@ async function main() {
   console.log("Changed owner of FlippandoGameMaster to:", flippando.address);
   
   // Write the addresses to config.js
-  fs.writeFileSync("./config.js", `
+  if (configFile !== ""){
+  fs.writeFileSync(configFile, `
     module.exports = {
       svgAddress: "${svg.address}",
       flippandoAddress: "${flippando.address}",
@@ -53,6 +70,7 @@ async function main() {
       flippandoBundlerAddress: "${flippandoBundler.address}",
       flippandoGameMasterAddress: "${flippandoGameMaster.address}",
     }`);
+  }
 }
 
 main()

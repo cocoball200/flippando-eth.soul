@@ -21,17 +21,20 @@ import Hexagram1 from './assets/hexagrams/hexagram1.svg';
 import Hexagram2 from './assets/hexagrams/hexagram2.svg';
 import Hexagram4 from './assets/hexagrams/hexagram4.svg';
 import Hexagram6 from './assets/hexagrams/hexagram6.svg';
+import SmallTile from '../components/SmallTile';
+
 import {
   flippandoAddress,
   flipAddress,
-  flippandoBundlerAddress
+  flippandoBundlerAddress,
+  flippandoGameMasterAddress
 } from '../src/config/testnet/evmos.js'
-
 
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
 import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
-import SmallTile from '../components/SmallTile';
+import FlippandoGameMaster from '../artifacts/contracts/FlippandoGameMaster.sol/FlippandoGameMaster.json'
+
 
 export default function Home() {
 
